@@ -57,11 +57,14 @@ const Customizer = () => {
     try {
       // call our backend to generate a image AI
       setGeneratingImg(true);
-      const res = await fetch("http://localhost:8080/api/v1/dalle", {
-        method: "POST",
-        body: JSON.stringify({ prompt }),
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await fetch(
+        "https://project-threejs-rixq.onrender.com/api/v1/dalle",
+        {
+          method: "POST",
+          body: JSON.stringify({ prompt }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       const data = await res.json();
       handleDecals(type, `data:image/png;base64,${data.photo}`);
     } catch (error) {
@@ -86,9 +89,11 @@ const Customizer = () => {
     switch (tabName) {
       case "logoShirt":
         state.isLogoTexture = !activeFilterTab[tabName];
+        setActiveEditorTab("");
         break;
       case "stylishShirt":
         state.isFullTexture = !activeFilterTab[tabName];
+        setActiveEditorTab("");
         break;
       default:
         state.isLogoTexture = true;
@@ -104,6 +109,13 @@ const Customizer = () => {
         [tabName]: !prevState[tabName],
       };
     });
+  };
+
+  const goBack = () => {
+    setActiveEditorTab("");
+    setTimeout(() => {
+      state.intro = true;
+    }, 100);
   };
 
   const readFile = (type) => {
@@ -143,7 +155,7 @@ const Customizer = () => {
             <CustomButton
               type="filled"
               title="Go Back"
-              handleClick={() => (state.intro = true)}
+              handleClick={() => goBack()}
               customStyles="w-fit px-4 py-2.5 font-bold text-sm"
             />
           </motion.div>
@@ -161,6 +173,13 @@ const Customizer = () => {
                 handleClick={() => handleActiveFilterTab(tab.name)}
               />
             ))}
+            <button className="download-btn" onClick={downloadCanvasToImage}>
+              <img
+                src={download}
+                alt="download_image"
+                className="w-3/5 h-3/5 object-contain"
+              />
+            </button>
           </motion.div>
         </>
       )}
